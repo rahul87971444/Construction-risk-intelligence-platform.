@@ -1,0 +1,6 @@
+id,site_name,hazard,category,severity,likelihood,status
+1,North Tower Development,Unprotected scaffold edge,Working at Height,5,4,Open
+2,Metro Line Extension,Material stored in access path,Housekeeping,3,3,Open
+3,Harbour Logistics Hub,Excavation barricade missing,Excavation,4,4,Open
+4,North Tower Development,Exposed temporary cable,Electrical,4,3,In Progress
+5,Metro Line Extension,Forklift pedestrian conflict,Equipment,5,4,Open
