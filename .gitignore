@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+*.db
+uploads/
+runs/
+*.pt
+node_modules/
+dist/
+.DS_Store
