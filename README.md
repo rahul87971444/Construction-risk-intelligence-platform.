@@ -76,7 +76,26 @@ These are initial project-defined thresholds for demonstration purposes.
 **Version 0.1 — Backend foundation**
 
 Image-based hazard detection, database persistence, frontend dashboard, and agent orchestration are planned for subsequent development stages.
+## Day 2 Progress
 
+### Completed
+- Set up the Python backend using FastAPI.
+- Created the initial Site Risk Agent logic.
+- Added severity and likelihood based risk scoring.
+- Created API endpoints to list, add, and update construction hazards.
+- Added an API endpoint for dashboard statistics.
+- Started the backend locally using Uvicorn.
+- Prepared the API documentation for testing.
+
+### Next Steps
+- Test all backend API endpoints.
+- Build the React dashboard.
+- Integrate construction-site image detection using YOLO and OpenCV.
+- Add database storage for hazard records.
+- Improve the Site Risk Agent and its recommendations.
+
+### Current Status
+Backend foundation created. API testing and frontend development are in progress.
 ## Disclaimer
 
 This educational prototype supports risk awareness and decision-making. It does not replace professional safety inspections or official regulatory compliance assessments.
