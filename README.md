@@ -1,101 +1,149 @@
-# Construction Risk Intelligence Platform
 
-**BuildSafe AI — Infosys Springboard Intensive Program**
+# BuildSafe AI — Construction Risk Intelligence Platform
 
-## Project Overview
+## 1. Project Overview
 
-An AI-assisted platform designed to monitor construction-site risks, analyze hazards, calculate risk scores, and provide actionable safety recommendations.
+BuildSafe AI is a prototype construction safety platform that combines computer vision and rule-based risk scoring to support construction-site hazard monitoring.
 
-This project is being developed for **Milestone 1: Site Risk Monitoring & Hazard Detection**.
+The application allows users to:
+- View a construction hazard dashboard.
+- Upload construction-site images for AI object detection.
+- View detected objects, bounding boxes and confidence scores.
+- Review recorded hazards and their risk levels.
+- View recommendations based on the calculated risk level.
+- Update hazard statuses.
 
-## Objectives
+## 2. Main Features
 
-- Monitor construction-site information.
-- Identify potential safety hazards.
-- Calculate risk scores using severity and likelihood.
-- Provide recommendations for corrective action.
-- Display hazard information through a dashboard.
-- Build toward AI-powered image-based hazard detection.
+### AI Image Inspection
+Uses a trained YOLO object-detection model to identify supported classes in uploaded images and display annotated results.
 
-## Technology Stack
+### Hazard Risk Assessment
+Calculates a risk score using:
 
-| Component | Technology |
-|---|---|
-| Backend API | FastAPI |
-| Programming | Python |
-| Object detection | YOLO |
-| Image processing | OpenCV |
-| Frontend | React.js |
-| UI styling | Tailwind CSS |
-| Agent workflow | LangGraph |
-| Database | PostgreSQL |
-| ORM | SQLAlchemy |
-| Charts | Recharts |
-| Version control | Git and GitHub |
+`Risk Score = Severity × Likelihood`
 
-## Current Implementation
+Severity and likelihood are each rated from 1 to 5.
 
-- FastAPI application.
-- Health-check endpoint.
-- Sample site-risk records.
-- Hazard listing and individual hazard lookup.
-- New hazard creation.
-- Hazard status updates.
-- Severity × likelihood risk scoring.
-- Rule-based safety recommendations.
-- Dashboard statistics endpoint.
+The current risk categories are:
+- Low
+- Medium
+- High
+- Critical
 
-## Risk Scoring
+### Hazard Register
+Displays sample hazard records with their category, project, severity, likelihood, status, score and recommended action.
 
-Risk score = Severity × Likelihood.
+### Dashboard API
+Provides summary information such as open hazards, critical hazards, resolved hazards and average risk score.
 
-Both severity and likelihood use a scale from 1 to 5.
+## 3. Technology Stack
 
-- 1–4: Low
-- 5–9: Medium
-- 10–16: High
-- 17–25: Critical
+- **Frontend:** HTML, CSS and JavaScript
+- **Backend:** Python and FastAPI
+- **AI / Computer Vision:** Ultralytics YOLO and Pillow
+- **API Documentation:** FastAPI Swagger UI
+- **Testing:** pytest
+- **Training Environment:** Google Colab
+- **Version Control:** Git and GitHub
 
-These are initial project-defined thresholds for demonstration purposes.
+## 4. Project Structure
 
-## API Endpoints
+```text
+Construction-risk-intelligence-platform/
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── risk_engine.py
+│   │   ├── image_detector.py
+│   │   └── database_schema.sql
+│   ├── models/
+│   │   └── best.pt
+│   ├── tests/
+│   └── requirements.txt
+├── data/
+│   └── sample_inspections.csv
+├── frontend/
+│   └── index.html
+├── .gitignore
+└── README.md
+```
+
+## 5. Setup on Windows
+
+Install Python first, then download and extract the repository.
+
+Open Command Prompt in the project folder and run:
+
+```bash
+cd backend
+python -m pip install -r requirements.txt
+python -m uvicorn app.main:app --reload
+```
+
+Keep this terminal running.
+
+Open a second terminal in the project folder and run:
+
+```bash
+python -m http.server 5173 --directory frontend
+```
+
+Open the dashboard:
+
+`http://localhost:5173`
+
+Open the API documentation:
+
+`http://127.0.0.1:8000/docs`
+
+## 6. Main API Endpoints
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| GET | `/` | Application information |
+| GET | `/` | Basic API information |
 | GET | `/health` | Health check |
-| GET | `/api/risks` | List hazards |
+| GET | `/api/risks` | List recorded hazards |
 | GET | `/api/risks/{hazard_id}` | Retrieve a hazard |
 | POST | `/api/risks` | Create a hazard |
 | PATCH | `/api/risks/{hazard_id}/status` | Update hazard status |
-| POST | `/api/analyze` | Analyze a hazard |
+| POST | `/api/analyze` | Calculate risk and recommendation |
+| POST | `/api/analyze-image` | Analyze an uploaded image |
 | GET | `/api/dashboard` | Retrieve dashboard statistics |
 
-## Project Status
+## 7. Model Evaluation
 
-**Version 0.1 — Backend foundation**
+The trained model was evaluated on a held-out test split.
 
-Image-based hazard detection, database persistence, frontend dashboard, and agent orchestration are planned for subsequent development stages.
-## Day 2 Progress
+- Test images: 82
+- Test instances: 806
+- Precision: 61.4%
+- Recall: 38.8%
+- mAP@50: 43.0%
+- mAP@50–95: 29.5%
 
-### Completed
-- Set up the Python backend using FastAPI.
-- Created the initial Site Risk Agent logic.
-- Added severity and likelihood based risk scoring.
-- Created API endpoints to list, add, and update construction hazards.
-- Added an API endpoint for dashboard statistics.
-- Started the backend locally using Uvicorn.
-- Prepared the API documentation for testing.
+These results indicate that the prototype can detect some supported objects but may miss objects or produce incorrect detections.
 
-### Next Steps
-- Test all backend API endpoints.
-- Build the React dashboard.
-- Integrate construction-site image detection using YOLO and OpenCV.
-- Add database storage for hazard records.
-- Improve the Site Risk Agent and its recommendations.
+## 8. Current Limitations
 
-### Current Status
-Backend foundation created. API testing and frontend development are in progress.
-## Disclaimer
+- The recorded hazard list uses illustrative in-memory sample records.
+- Hazard status changes may be lost when the backend restarts.
+- Image detection is limited to the classes learned by the model.
+- Object detections do not automatically confirm every construction hazard.
+- Risk scores are calculated from supplied severity and likelihood values.
+- The model is not certified for safety-critical decisions.
 
-This educational prototype supports risk awareness and decision-making. It does not replace professional safety inspections or official regulatory compliance assessments.
+All AI results require human verification. No detection does not mean a site is safe.
+
+## 9. Future Improvements
+
+- Integrate a persistent database for hazard records.
+- Improve model accuracy with additional representative training data.
+- Connect image detections to a reviewed hazard-reporting workflow.
+- Add user authentication and role-based permissions.
+- Add inspection history, reporting and deployment support.
+
+## 10. Conclusion
+
+BuildSafe AI demonstrates a prototype workflow for construction hazard recording, rule-based risk assessment, and AI-assisted image inspection. It provides a foundation for further development and must be validated before any real-world safety use.
