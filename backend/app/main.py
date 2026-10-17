@@ -1,3 +1,11 @@
+
+import base64
+from io import BytesIO
+
+from PIL import Image, UnidentifiedImageError
+from fastapi import File, UploadFile, HTTPException
+
+from app.image_detector import analyze_image
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException
@@ -214,3 +222,66 @@ def dashboard():
         "risk_method": "Severity x Likelihood",
         "data_type": "Illustrative sample records",
     }
+    
+@app.post("/api/analyze-image")
+async def analyze_construction_image(
+    file: UploadFile = File(...)
+):
+    if file.content_type not in {
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    }:
+        raise HTTPException(
+            status_code=400,
+            detail="Upload a JPG, PNG, or WebP image."
+        )
+
+    contents = await file.read()
+
+    if not contents:
+        raise HTTPException(
+            status_code=400,
+            detail="The uploaded image is empty."
+        )
+
+    if len(contents) > 10 * 1024 * 1024:
+        raise HTTPException(
+            status_code=413,
+            detail="Image size must be 10 MB or less."
+        )
+
+    try:
+        image = Image.open(BytesIO(contents)).convert("RGB")
+    except (UnidentifiedImageError, OSError):
+        raise HTTPException(
+            status_code=400,
+            detail="The uploaded file is not a valid image."
+        )
+
+    try:
+        result = analyze_image(image)
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=503,
+            detail="Trained model weights are not configured."
+        )
+
+    output = BytesIO()
+    result["annotated_image"].save(output, format="JPEG")
+    encoded_image = base64.b64encode(
+        output.getvalue()
+    ).decode("utf-8")
+
+    return {
+        "filename": file.filename,
+        "model": "YOLO construction safety detector",
+        "detection_count": result["detection_count"],
+        "detections": result["detections"],
+        "annotated_image": "data:image/jpeg;base64," + encoded_image,
+        "warning": (
+            "AI predictions require human verification. "
+            "No detections does not mean the site is safe."
+        )
+    }
+
